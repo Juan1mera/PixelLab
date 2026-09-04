@@ -37,9 +37,10 @@ en la terminal.
    activado salvo en el Lab 8.
 4. **Файл → Сохранить как PNG** descarga el resultado.
 
-La barra de estado inferior muestra las dimensiones, el tiempo del último `apply` en
-milisegundos y el mensaje que devuelva la operación (por ejemplo, el umbral que calcula
-Otsu). El conmutador RU/ES cambia el idioma de la interfaz.
+El panel «Состояние» del lateral, justo debajo de la teoría, muestra el fichero cargado, las
+dimensiones, el tiempo del último `apply` en milisegundos y el mensaje que devuelva la
+operación (por ejemplo, el umbral que calcula Otsu). El conmutador RU/ES cambia el idioma de
+la interfaz.
 
 ## Los 8 laboratorios
 
@@ -108,7 +109,7 @@ src/
    - Bucles planos: sin `map`/`filter` por píxel y sin crear objetos dentro del bucle.
      Si hay una tabla de 256 entradas que precalcular, se precalcula.
 4. Si la operación quiere contar algo (un umbral, un número de iteraciones), devuelve
-   `OperationResult` en vez de `GrayImage` y el mensaje sale en la barra de estado.
+   `OperationResult` en vez de `GrayImage` y el mensaje sale en el panel «Состояние».
 5. Borra la línea `/* eslint-disable @typescript-eslint/no-unused-vars … */` del principio
    del fichero en cuanto el cuerpo use `params`.
 6. Pon `implemented: true` en el `meta.ts` del laboratorio: el badge del índice pasa a

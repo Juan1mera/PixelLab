@@ -14,7 +14,7 @@ import LabNav from '@/components/LabNav';
 import MenuBar from '@/components/MenuBar';
 import OperationTabs from '@/components/OperationTabs';
 import ParamControls from '@/components/ParamControls';
-import StatusBar from '@/components/StatusBar';
+import StatusPanel from '@/components/StatusPanel';
 import { useLang } from '@/i18n/lang';
 import { isBinary } from '@/lib/image/access';
 import { imageDataToGray } from '@/lib/image/convert';
@@ -206,6 +206,15 @@ function Workspace({ lab }: { lab: LabDefinition }) {
             </p>
           </details>
 
+          <StatusPanel
+            image={shown}
+            fileName={fileName}
+            elapsedMs={elapsedMs}
+            message={message}
+            warning={warning}
+            error={error}
+          />
+
           <OperationTabs
             operations={lab.operations}
             activeKey={operation.key}
@@ -284,15 +293,6 @@ function Workspace({ lab }: { lab: LabDefinition }) {
           )}
         </section>
       </main>
-
-      <StatusBar
-        image={shown}
-        fileName={fileName}
-        elapsedMs={elapsedMs}
-        message={message}
-        warning={warning}
-        error={error}
-      />
     </div>
   );
 }
