@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars -- los stubs aún no leen `params`. */
-import { clone } from '@/lib/image/access';
+import { createGray, maxLevel } from '@/lib/image/access';
 import type { GrayImage } from '@/lib/image/types';
-import type { ParamValues } from '@/labs/types';
+import type { OperationResult } from '@/labs/types';
 
 /**
  * Negativo de la imagen (п. 2).
@@ -18,7 +17,19 @@ import type { ParamValues } from '@/labs/types';
  *   2. Reservar la salida con `createGray(src.width, src.height)`.
  *   3. Escribir `L − src.data[i]` en cada posición.
  */
-export function negative(src: GrayImage, params: ParamValues): GrayImage {
-  // TODO(lab-1): implementar la inversión g = L − f.
-  return clone(src);
+export function negative(src: GrayImage): OperationResult {
+  const level = maxLevel(src);
+  const out = createGray(src.width, src.height);
+
+  for (let i = 0; i < src.data.length; i++) {
+    out.data[i] = level - src.data[i];
+  }
+
+  return {
+    image: out,
+    message: {
+      ru: `L = ${level}`,
+      es: `L = ${level}`,
+    },
+  };
 }

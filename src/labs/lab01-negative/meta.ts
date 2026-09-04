@@ -21,5 +21,5 @@ export const lab01: LabDefinition = {
       apply: negative,
     },
   ],
-  implemented: false,
+  implemented: true,
 };
