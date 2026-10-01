@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import {
   useCallback,
   useEffect,
@@ -20,6 +21,13 @@ import { isBinary } from '@/lib/image/access';
 import { imageDataToGray } from '@/lib/image/convert';
 import { computeHistogram } from '@/lib/image/histogram';
 import { downloadPng, fileToImageData, resultFileName } from '@/lib/image/io';
+import {
+  clearOperation,
+  peekOperation,
+  recallImage,
+  rememberImage,
+  requestOperation,
+} from '@/lib/image/session';
 import type { GrayImage } from '@/lib/image/types';
 import { getLabBySlug } from '@/labs/registry';
 import {
@@ -27,6 +35,7 @@ import {
   unwrap,
   type Bilingual,
   type LabDefinition,
+  type LabOperation,
   type ParamValue,
 } from '@/labs/types';
 
@@ -55,35 +64,89 @@ export default function LabWorkspace({ slug }: { slug: string }) {
   return <Workspace key={lab.slug} lab={lab} />;
 }
 
+/** Estado con el que arranca el taller al montarse. */
+interface Bootstrap {
+  source: GrayImage | null;
+  fileName: string | null;
+  opKey: string;
+  result: GrayImage | null;
+  message: Bilingual | null;
+  elapsedMs: number | null;
+  error: string | null;
+}
+
+/**
+ * Recupera la imagen abierta en otro laboratorio y, si se llegó aquí desde el
+ * menú «Преобразование», ejecuta ya la operación pedida. `apply` es pura, así
+ * que calcularla durante la inicialización del estado es seguro.
+ */
+function bootstrap(lab: LabDefinition): Bootstrap {
+  const stored = recallImage();
+  const pendingKey = peekOperation(lab.slug);
+  const op = lab.operations.find((o) => o.key === pendingKey);
+
+  const state: Bootstrap = {
+    source: stored?.image ?? null,
+    fileName: stored?.fileName ?? null,
+    opKey: op?.key ?? lab.operations[0].key,
+    result: null,
+    message: null,
+    elapsedMs: null,
+    error: null,
+  };
+
+  if (op && stored) {
+    const start = performance.now();
+    try {
+      const output = unwrap(op.apply(stored.image, defaultParams(op)));
+      state.result = output.image;
+      state.message = output.message ?? null;
+    } catch (cause) {
+      state.error = cause instanceof Error ? cause.message : String(cause);
+    }
+    state.elapsedMs = performance.now() - start;
+  }
+
+  return state;
+}
+
 function Workspace({ lab }: { lab: LabDefinition }) {
   const { t } = useLang();
+  const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [initial] = useState(() => bootstrap(lab));
 
-  const [source, setSource] = useState<GrayImage | null>(null);
-  const [result, setResult] = useState<GrayImage | null>(null);
-  const [fileName, setFileName] = useState<string | null>(null);
-  const [opKey, setOpKey] = useState(lab.operations[0].key);
+  const [source, setSource] = useState<GrayImage | null>(initial.source);
+  const [result, setResult] = useState<GrayImage | null>(initial.result);
+  const [fileName, setFileName] = useState<string | null>(initial.fileName);
+  const [opKey, setOpKey] = useState(initial.opKey);
   const [values, setValues] = useState<Record<string, Record<string, ParamValue>>>(
     () => {
-      const initial: Record<string, Record<string, ParamValue>> = {};
-      for (const op of lab.operations) initial[op.key] = defaultParams(op);
-      return initial;
+      const defaults: Record<string, Record<string, ParamValue>> = {};
+      for (const op of lab.operations) defaults[op.key] = defaultParams(op);
+      return defaults;
     },
   );
   // El Lab 8 encadena operaciones caras sobre imágenes binarias: ahí el
   // autopreview molesta más que ayuda.
   const [autoPreview, setAutoPreview] = useState(lab.id !== 8);
-  const [elapsedMs, setElapsedMs] = useState<number | null>(null);
-  const [message, setMessage] = useState<Bilingual | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [elapsedMs, setElapsedMs] = useState<number | null>(initial.elapsedMs);
+  const [message, setMessage] = useState<Bilingual | null>(initial.message);
+  const [error, setError] = useState<string | null>(initial.error);
   const [dragging, setDragging] = useState(false);
 
   const operation =
     lab.operations.find((op) => op.key === opKey) ?? lab.operations[0];
 
+  // La operación pendiente ya se atendió en `bootstrap`.
+  useEffect(() => {
+    clearOperation();
+  }, []);
+
   const openFile = useCallback(async (file: File) => {
     try {
       const gray = imageDataToGray(await fileToImageData(file));
+      rememberImage(gray, file.name);
       setSource(gray);
       setResult(null);
       setFileName(file.name);
@@ -95,23 +158,41 @@ function Workspace({ lab }: { lab: LabDefinition }) {
     }
   }, []);
 
-  const run = useCallback(() => {
-    if (!source) return;
+  const runOperation = useCallback(
+    (op: LabOperation) => {
+      if (!source) return;
 
-    const start = performance.now();
-    try {
-      const output = unwrap(operation.apply(source, values[operation.key] ?? {}));
-      setElapsedMs(performance.now() - start);
-      setResult(output.image);
-      setMessage(output.message ?? null);
-      setError(null);
-    } catch (cause) {
-      setElapsedMs(performance.now() - start);
-      setResult(null);
-      setMessage(null);
-      setError(cause instanceof Error ? cause.message : String(cause));
+      const start = performance.now();
+      try {
+        const output = unwrap(op.apply(source, values[op.key] ?? {}));
+        setElapsedMs(performance.now() - start);
+        setResult(output.image);
+        setMessage(output.message ?? null);
+        setError(null);
+      } catch (cause) {
+        setElapsedMs(performance.now() - start);
+        setResult(null);
+        setMessage(null);
+        setError(cause instanceof Error ? cause.message : String(cause));
+      }
+    },
+    [source, values],
+  );
+
+  const run = useCallback(() => runOperation(operation), [runOperation, operation]);
+
+  /** Menú «Преобразование»: misma página → ejecutar; otra → navegar y ejecutar. */
+  const onTransform = (slug: string, key: string) => {
+    if (slug === lab.slug) {
+      const op = lab.operations.find((o) => o.key === key);
+      if (!op) return;
+      setOpKey(op.key);
+      runOperation(op);
+      return;
     }
-  }, [operation, source, values]);
+    requestOperation(slug, key);
+    router.push(`/lab/${slug}`);
+  };
 
   useEffect(() => {
     if (!autoPreview || !source) return;
@@ -157,6 +238,8 @@ function Workspace({ lab }: { lab: LabDefinition }) {
           if (shown) void downloadPng(shown, resultFileName(fileName));
         }}
         canSave={Boolean(shown)}
+        onTransform={onTransform}
+        active={{ slug: lab.slug, opKey: operation.key }}
       />
       <LabNav activeSlug={lab.slug} />
 

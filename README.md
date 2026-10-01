@@ -32,7 +32,10 @@ en la terminal.
 
 1. **Файл → Открыть** (o arrastra un fichero sobre los lienzos) para cargar una imagen.
    Se convierte a escala de grises con la luma BT.601 al entrar.
-2. Elige la operación en las pestañas y ajusta los parámetros del panel izquierdo.
+2. Elige la operación en el menú **Преобразование** (p. ej. «Негатив», «Степенное
+   преобразование») o en las pestañas, y ajusta los parámetros del panel izquierdo. El menú
+   crece con cada laboratorio implementado; si la operación es de otro laboratorio, navega
+   hasta él conservando la imagen abierta y la aplica.
 3. **Применить**, o deja el autopreview: recalcula solo tras 150 ms sin tocar nada. Viene
    activado salvo en el Lab 8.
 4. **Файл → Сохранить как PNG** descarga el resultado.
@@ -47,7 +50,7 @@ la interfaz.
 | # | Ruta | Operaciones | Temario |
 | --- | --- | --- | --- |
 | 1 | `/lab/negative` | negativo | п. 2 |
-| 2 | `/lab/power` | potencia | п. 3 |
+| 2 | `/lab/power` | potencia, s = (L−1)·(r/(L−1))^γ | п. 3 |
 | 3 | `/lab/slice` | corte de rango de brillos | п. 4 |
 | 4 | `/lab/smoothing` | media, mediana | пп. 5–6 |
 | 5 | `/lab/gradients` | Roberts, Sobel, laplaciano | пп. 7–9 |
@@ -65,6 +68,7 @@ src/
 │   ├── convert.ts              ImageData ↔ GrayImage (luma BT.601)
 │   ├── access.ts               at(), clone(), createGray(), clamp8()…
 │   ├── io.ts                   fileToImageData(), downloadPng()
+│   ├── session.ts              imagen abierta y operación pedida entre laboratorios
 │   ├── convolve.ts             TODO — contenido del Lab 4
 │   ├── histogram.ts            TODO — contenido del Lab 6
 │   └── morphology.ts           TODO — contenido del Lab 8
