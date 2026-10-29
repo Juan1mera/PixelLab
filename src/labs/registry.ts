@@ -1,14 +1,17 @@
 import { lab01 } from './lab01-negative/meta';
 import { lab02 } from './lab02-power/meta';
-import { lab03 } from './lab03-slice/meta';
+import { lab03 } from './lab03-gradients/meta';
 import { lab04 } from './lab04-smoothing/meta';
-import { lab05 } from './lab05-gradients/meta';
+import { lab05 } from './lab05-slice/meta';
 import { lab06 } from './lab06-histogram/meta';
 import { lab07 } from './lab07-threshold/meta';
 import { lab08 } from './lab08-morphology/meta';
 import type { LabDefinition } from './types';
 
-/** Los ocho laboratorios, en el orden del temario. */
+/**
+ * Los ocho laboratorios, numerados como en las prácticas del curso
+ * (Лб №1 negativo, Лб №2 potencia, Лб №3 gradiente…).
+ */
 export const labs: readonly LabDefinition[] = [
   lab01,
   lab02,

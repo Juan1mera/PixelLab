@@ -33,8 +33,9 @@ en la terminal.
 1. **Файл → Открыть** (o arrastra un fichero sobre los lienzos) para cargar una imagen.
    Se convierte a escala de grises con la luma BT.601 al entrar.
 2. Elige la operación en el menú **Преобразование** (p. ej. «Негатив», «Степенное
-   преобразование») o en las pestañas, y ajusta los parámetros del panel izquierdo. El menú
-   crece con cada laboratorio implementado; si la operación es de otro laboratorio, navega
+   преобразование» o el submenú «Повышение резкости» → «Градиент») o en las pestañas, y
+   ajusta los parámetros del panel izquierdo. El menú crece con cada laboratorio
+   implementado; si la operación es de otro laboratorio, navega
    hasta él conservando la imagen abierta y la aplica.
 3. **Применить**, o deja el autopreview: recalcula solo tras 150 ms sin tocar nada. Viene
    activado salvo en el Lab 8.
@@ -47,13 +48,16 @@ la interfaz.
 
 ## Los 8 laboratorios
 
+La numeración sigue la de las prácticas del curso (carpetas `Лб_№N`): el Lab 3 es
+«Повышение резкости с помощью градиента».
+
 | # | Ruta | Operaciones | Temario |
 | --- | --- | --- | --- |
 | 1 | `/lab/negative` | negativo | п. 2 |
 | 2 | `/lab/power` | potencia, s = (L−1)·(r/(L−1))^γ | п. 3 |
-| 3 | `/lab/slice` | corte de rango de brillos | п. 4 |
+| 3 | `/lab/gradients` | realce de nitidez con el gradiente (simple, Roberts, Sobel): g = f + k·\|∇f\| | пп. 7–9 |
 | 4 | `/lab/smoothing` | media, mediana | пп. 5–6 |
-| 5 | `/lab/gradients` | Roberts, Sobel, laplaciano | пп. 7–9 |
+| 5 | `/lab/slice` | corte de rango de brillos | п. 4 |
 | 6 | `/lab/histogram` | ver histograma, ecualizar | пп. 10–11 |
 | 7 | `/lab/threshold` | umbral global, Otsu | пп. 12–13 |
 | 8 | `/lab/morphology` | dilatación, erosión, cierre, apertura, bordes, esqueleto | пп. 14–19 |
@@ -117,7 +121,8 @@ src/
 5. Borra la línea `/* eslint-disable @typescript-eslint/no-unused-vars … */` del principio
    del fichero en cuanto el cuerpo use `params`.
 6. Pon `implemented: true` en el `meta.ts` del laboratorio: el badge del índice pasa a
-   verde.
+   verde y la operación aparece en «Преобразование». Si el enunciado pide un submenú
+   (p. ej. «Повышение резкости» → «Градиент»), indícalo con `menuGroup` en la operación.
 7. `pnpm lint && pnpm build`, y etiqueta la entrega: `git tag lab-N`.
 
 Los laboratorios 4, 6 y 8 tienen además ayudantes compartidos en `src/lib/image`

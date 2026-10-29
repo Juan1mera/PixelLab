@@ -22,6 +22,6 @@ import type { ParamValues } from '@/labs/types';
  *   3. Recorrer la imagen aplicando la condición; un solo `if` por píxel.
  */
 export function slice(src: GrayImage, params: ParamValues): GrayImage {
-  // TODO(lab-3): implementar el corte de rango en sus dos modos.
+  // TODO(lab-5): implementar el corte de rango en sus dos modos.
   return clone(src);
 }

@@ -24,7 +24,7 @@ import type { BorderMode, GrayImage } from './types';
  * Ojo: la convolución estricta refleja la máscara (w(-s, -t)); la correlación
  * no lo hace. Para máscaras simétricas (media, gaussiana, laplaciano) ambas
  * coinciden; para Sobel el signo del gradiente se invierte. Documenta cuál de
- * las dos implementas y sé coherente en el Lab 5.
+ * las dos implementas y sé coherente en el Lab 3.
  */
 export interface Kernel {
   width: number;
@@ -56,7 +56,7 @@ export function kernel(
  * Respuesta cruda de la convolución, sin dividir ni saturar.
  *
  * Devuelve `width * height` valores reales con signo. Es lo que necesita el
- * Lab 5: el módulo del gradiente se calcula a partir de las respuestas de dos
+ * Lab 3: el módulo del gradiente se calcula a partir de las respuestas de dos
  * máscaras antes de normalizar a [0, 255].
  */
 export function convolveRaw(

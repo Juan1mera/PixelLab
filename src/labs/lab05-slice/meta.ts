@@ -1,8 +1,8 @@
 import type { LabDefinition } from '@/labs/types';
 import { slice } from './filter';
 
-export const lab03: LabDefinition = {
-  id: 3,
+export const lab05: LabDefinition = {
+  id: 5,
   slug: 'slice',
   temario: 'п. 4',
   title: { ru: 'Вырезание диапазона яркостей', es: 'Corte de rango de brillos' },

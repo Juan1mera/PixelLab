@@ -53,6 +53,12 @@ export interface OperationResult {
 export interface LabOperation {
   key: string;
   label: Bilingual;
+  /**
+   * Submenú de «Преобразование» en el que aparece la operación, p. ej.
+   * «Повышение резкости» → «Градиент». Sin él, la operación cuelga
+   * directamente de «Преобразование».
+   */
+  menuGroup?: Bilingual;
   params?: LabParam[];
   /**
    * Función pura: no muta `src`. Devuelve la imagen procesada, o un
