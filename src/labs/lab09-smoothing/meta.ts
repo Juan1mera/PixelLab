@@ -18,8 +18,8 @@ const size: LabParam = {
   },
 };
 
-export const lab04: LabDefinition = {
-  id: 4,
+export const lab09: LabDefinition = {
+  id: 9,
   slug: 'smoothing',
   temario: 'пп. 5–6',
   title: { ru: 'Сглаживающие фильтры', es: 'Filtros de suavizado' },

@@ -4,7 +4,7 @@ import { gradient } from './filter';
 export const lab03: LabDefinition = {
   id: 3,
   slug: 'gradients',
-  temario: 'пп. 7–9',
+  temario: 'пп. 7–8',
   title: {
     ru: 'Повышение резкости с помощью градиента',
     es: 'Realce de nitidez con el gradiente',

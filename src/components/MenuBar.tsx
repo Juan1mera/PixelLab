@@ -14,7 +14,7 @@ import type { Bilingual, LabDefinition, LabOperation } from '@/labs/types';
  * «Преобразование» crece con cada laboratorio, como pide el enunciado: lista
  * las operaciones de los laboratorios marcados `implemented: true`. Las que
  * declaran `menuGroup` van en un submenú, p. ej. «Преобразование» →
- * «Повышение резкости» → «Градиент» (Лб №3).
+ * «Повышение резкости» → «Градиент» (Лб №3) / «Лапласиан» (Лб №4).
  */
 interface MenuBarProps {
   onOpen: () => void;

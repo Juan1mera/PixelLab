@@ -1,7 +1,7 @@
 # PixeLab
 
 Aplicación web de procesamiento de imágenes para el practicum de **Методы и алгоритмы
-обработки мультимедийных данных**. Cubre los 19 puntos del temario repartidos en 8
+обработки мультимедийных данных**. Cubre los 19 puntos del temario repartidos en
 laboratorios independientes.
 
 Todo ocurre en el navegador: no hay backend, ni rutas API, ni dependencias de
@@ -33,7 +33,7 @@ en la terminal.
 1. **Файл → Открыть** (o arrastra un fichero sobre los lienzos) para cargar una imagen.
    Se convierte a escala de grises con la luma BT.601 al entrar.
 2. Elige la operación en el menú **Преобразование** (p. ej. «Негатив», «Степенное
-   преобразование» o el submenú «Повышение резкости» → «Градиент») o en las pestañas, y
+   преобразование» o el submenú «Повышение резкости» → «Градиент» / «Лапласиан») o en las pestañas, y
    ajusta los parámetros del panel izquierdo. El menú crece con cada laboratorio
    implementado; si la operación es de otro laboratorio, navega
    hasta él conservando la imagen abierta y la aplica.
@@ -46,21 +46,24 @@ dimensiones, el tiempo del último `apply` en milisegundos y el mensaje que devu
 operación (por ejemplo, el umbral que calcula Otsu). El conmutador RU/ES cambia el idioma de
 la interfaz.
 
-## Los 8 laboratorios
+## Los laboratorios
 
 La numeración sigue la de las prácticas del curso (carpetas `Лб_№N`): el Lab 3 es
-«Повышение резкости с помощью градиента».
+«Повышение резкости с помощью градиента» y el Lab 4 «Повышение резкости с помощью
+лапласиана». El suavizado, que ocupaba el hueco 4, queda como laboratorio 9 pendiente hasta
+que salga su enunciado.
 
 | # | Ruta | Operaciones | Temario |
 | --- | --- | --- | --- |
 | 1 | `/lab/negative` | negativo | п. 2 |
 | 2 | `/lab/power` | potencia, s = (L−1)·(r/(L−1))^γ | п. 3 |
-| 3 | `/lab/gradients` | realce de nitidez con el gradiente (simple, Roberts, Sobel): g = f + k·\|∇f\| | пп. 7–9 |
-| 4 | `/lab/smoothing` | media, mediana | пп. 5–6 |
+| 3 | `/lab/gradients` | realce de nitidez con el gradiente (simple, Roberts, Sobel): g = f + k·\|∇f\| | пп. 7–8 |
+| 4 | `/lab/laplacian` | realce de nitidez con el laplaciano (máscaras de 4 y 8 vecinos, рис. 1–2): g = f ∓ ∇²f según w(0,0) | п. 9 |
 | 5 | `/lab/slice` | corte de rango de brillos | п. 4 |
 | 6 | `/lab/histogram` | ver histograma, ecualizar | пп. 10–11 |
 | 7 | `/lab/threshold` | umbral global, Otsu | пп. 12–13 |
 | 8 | `/lab/morphology` | dilatación, erosión, cierre, apertura, bordes, esqueleto | пп. 14–19 |
+| 9 | `/lab/smoothing` | media, mediana (pendiente) | пп. 5–6 |
 
 ## Estructura
 
@@ -73,12 +76,12 @@ src/
 │   ├── access.ts               at(), clone(), createGray(), clamp8()…
 │   ├── io.ts                   fileToImageData(), downloadPng()
 │   ├── session.ts              imagen abierta y operación pedida entre laboratorios
-│   ├── convolve.ts             TODO — contenido del Lab 4
+│   ├── convolve.ts             convolución (correlación) con máscara — Lab 4
 │   ├── histogram.ts            TODO — contenido del Lab 6
 │   └── morphology.ts           TODO — contenido del Lab 8
 ├── labs/
 │   ├── types.ts                LabDefinition, LabOperation, LabParam, Bilingual
-│   ├── registry.ts             los 8 labs + getLabBySlug()
+│   ├── registry.ts             los labs + getLabBySlug()
 │   └── labNN-<slug>/
 │       ├── meta.ts             describe: títulos, parámetros, teoría
 │       └── filter.ts           calcula: solo funciones puras
@@ -125,7 +128,8 @@ src/
    (p. ej. «Повышение резкости» → «Градиент»), indícalo con `menuGroup` en la operación.
 7. `pnpm lint && pnpm build`, y etiqueta la entrega: `git tag lab-N`.
 
-Los laboratorios 4, 6 y 8 tienen además ayudantes compartidos en `src/lib/image`
-(`convolve.ts`, `histogram.ts`, `morphology.ts`) que hay que rellenar junto con el
-laboratorio correspondiente. El histograma que dibuja la interfaz sale de
+Los laboratorios 6 y 8 tienen además ayudantes compartidos en `src/lib/image`
+(`histogram.ts`, `morphology.ts`) que hay que rellenar junto con el laboratorio
+correspondiente; `convolve.ts` ya está implementado desde el Lab 4 y lo puede usar la media
+del suavizado. El histograma que dibuja la interfaz sale de
 `computeHistogram()`, así que el panel queda vacío hasta que se implemente el Lab 6.

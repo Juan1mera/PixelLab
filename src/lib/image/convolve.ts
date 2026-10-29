@@ -1,6 +1,5 @@
-/* Contenido del Lab 4 (пп. 5–6). Los parámetros no se usan todavía. */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { clone } from './access';
+/* Implementado en el Lab 4 (laplaciano); lo reutiliza el suavizado por media. */
+import { at, clamp8, createGray } from './access';
 import type { BorderMode, GrayImage } from './types';
 
 /**
@@ -21,10 +20,10 @@ import type { BorderMode, GrayImage } from './types';
  *   3. Para cada píxel (x, y), acumular la suma ponderada de su vecindad.
  *   4. Escribir `clamp8(suma / D + O)` en la salida.
  *
- * Ojo: la convolución estricta refleja la máscara (w(-s, -t)); la correlación
- * no lo hace. Para máscaras simétricas (media, gaussiana, laplaciano) ambas
- * coinciden; para Sobel el signo del gradiente se invierte. Documenta cuál de
- * las dos implementas y sé coherente en el Lab 3.
+ * Se implementa la **correlación** (la máscara no se refleja), que es como el
+ * enunciado aplica las máscaras: el coeficiente w(s, t) multiplica a
+ * f(x + s, y + t). Para máscaras simétricas (media, laplaciano) coincide con
+ * la convolución estricta.
  */
 export interface Kernel {
   width: number;
@@ -49,23 +48,59 @@ export function kernel(
       `La máscara ${width}×${height} necesita ${width * height} coeficientes, recibí ${data.length}.`,
     );
   }
+  if (width % 2 === 0 || height % 2 === 0) {
+    throw new Error(`La máscara ${width}×${height} debe tener lados impares.`);
+  }
   return { width, height, data, ...options };
 }
 
+/** Coeficiente central w(0, 0) de la máscara. */
+export function centerWeight(k: Kernel): number {
+  return k.data[((k.height - 1) / 2) * k.width + (k.width - 1) / 2];
+}
+
+/** Divisor efectivo D: el explícito, o la suma de coeficientes (1 si es 0). */
+function effectiveDivisor(k: Kernel): number {
+  if (k.divisor !== undefined && k.divisor !== 0) return k.divisor;
+  let sum = 0;
+  for (let i = 0; i < k.data.length; i++) sum += k.data[i];
+  return sum === 0 ? 1 : sum;
+}
+
 /**
- * Respuesta cruda de la convolución, sin dividir ni saturar.
+ * Respuesta cruda de la máscara, sin dividir ni saturar:
+ *
+ *     R(x, y) = Σ_{s=-a..a} Σ_{t=-b..b} w(s, t) · f(x + s, y + t)
  *
  * Devuelve `width * height` valores reales con signo. Es lo que necesita el
- * Lab 3: el módulo del gradiente se calcula a partir de las respuestas de dos
- * máscaras antes de normalizar a [0, 255].
+ * laplaciano del Lab 4, cuya respuesta es negativa a un lado de cada contorno.
  */
 export function convolveRaw(
   src: GrayImage,
   k: Kernel,
   mode: BorderMode = 'clamp',
 ): Float32Array {
-  // TODO(lab-4): implementar la suma ponderada descrita arriba.
-  return new Float32Array(src.width * src.height);
+  const { width: w, height: h } = src;
+  const out = new Float32Array(w * h);
+  const a = (k.width - 1) / 2;
+  const b = (k.height - 1) / 2;
+  const coef = k.data;
+
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      let sum = 0;
+      let i = 0;
+      for (let t = -b; t <= b; t++) {
+        for (let s = -a; s <= a; s++, i++) {
+          const wst = coef[i];
+          if (wst !== 0) sum += wst * at(src, x + s, y + t, mode);
+        }
+      }
+      out[y * w + x] = sum;
+    }
+  }
+
+  return out;
 }
 
 /** Convolución completa: respuesta cruda, divisor, desplazamiento y `clamp8`. */
@@ -74,6 +109,12 @@ export function convolve(
   k: Kernel,
   mode: BorderMode = 'clamp',
 ): GrayImage {
-  // TODO(lab-4): implementar la fórmula descrita arriba.
-  return clone(src);
+  const raw = convolveRaw(src, k, mode);
+  const d = effectiveDivisor(k);
+  const o = k.offset ?? 0;
+  const out = createGray(src.width, src.height);
+  for (let i = 0; i < raw.length; i++) {
+    out.data[i] = clamp8(raw[i] / d + o);
+  }
+  return out;
 }

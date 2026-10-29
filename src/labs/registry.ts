@@ -1,16 +1,18 @@
 import { lab01 } from './lab01-negative/meta';
 import { lab02 } from './lab02-power/meta';
 import { lab03 } from './lab03-gradients/meta';
-import { lab04 } from './lab04-smoothing/meta';
+import { lab04 } from './lab04-laplacian/meta';
 import { lab05 } from './lab05-slice/meta';
 import { lab06 } from './lab06-histogram/meta';
 import { lab07 } from './lab07-threshold/meta';
 import { lab08 } from './lab08-morphology/meta';
+import { lab09 } from './lab09-smoothing/meta';
 import type { LabDefinition } from './types';
 
 /**
- * Los ocho laboratorios, numerados como en las prácticas del curso
- * (Лб №1 negativo, Лб №2 potencia, Лб №3 gradiente…).
+ * Los laboratorios, numerados como en las prácticas del curso
+ * (Лб №1 negativo, Лб №2 potencia, Лб №3 gradiente, Лб №4 laplaciano…).
+ * El suavizado (9) queda pendiente hasta que salga su enunciado.
  */
 export const labs: readonly LabDefinition[] = [
   lab01,
@@ -21,6 +23,7 @@ export const labs: readonly LabDefinition[] = [
   lab06,
   lab07,
   lab08,
+  lab09,
 ];
 
 /** Slugs válidos para `generateStaticParams()`. */
