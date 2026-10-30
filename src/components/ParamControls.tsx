@@ -1,5 +1,6 @@
 'use client';
 
+import { MathInline } from '@/components/MathText';
 import { useLang } from '@/i18n/lang';
 import type { LabParam, ParamValue, ParamValues } from '@/labs/types';
 
@@ -38,7 +39,11 @@ export default function ParamControls({
 
           <Control param={param} values={values} onChange={onChange} />
 
-          {param.hint && <span className="text-zinc-500">{t(param.hint)}</span>}
+          {param.hint && (
+            <span className="text-zinc-500">
+              <MathInline text={t(param.hint)} />
+            </span>
+          )}
         </label>
       ))}
     </div>

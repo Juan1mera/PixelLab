@@ -28,8 +28,8 @@ export function negative(src: GrayImage): OperationResult {
   return {
     image: out,
     message: {
-      ru: `L = ${level}`,
-      es: `L = ${level}`,
+      ru: `$L = ${level}$`,
+      es: `$L = ${level}$`,
     },
   };
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
+import { MathText } from '@/components/MathText';
 import { useLang } from '@/i18n/lang';
 import type { GrayImage } from '@/lib/image/types';
 import type { Bilingual } from '@/labs/types';
@@ -71,9 +72,10 @@ export default function StatusPanel({
       </dl>
 
       {message && (
-        <p className="border-t border-zinc-200 px-2 py-1.5 font-mono text-zinc-900 dark:border-zinc-800 dark:text-zinc-100">
-          {t(message)}
-        </p>
+        <MathText
+          text={t(message)}
+          className="border-t border-zinc-200 px-2 py-1.5 text-zinc-900 dark:border-zinc-800 dark:text-zinc-100"
+        />
       )}
 
       {warning && (

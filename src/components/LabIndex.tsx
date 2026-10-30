@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { MathInline } from '@/components/MathText';
 import { useLang } from '@/i18n/lang';
 import { labs } from '@/labs/registry';
 
@@ -65,7 +66,7 @@ export default function LabIndex() {
                   {t(lab.title)}
                 </span>
                 <span className="text-xs text-zinc-600 dark:text-zinc-400">
-                  {t(lab.summary)}
+                  <MathInline text={t(lab.summary)} />
                 </span>
               </Link>
             </li>

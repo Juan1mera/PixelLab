@@ -22,3 +22,11 @@
 body {
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
+
+/* Fórmulas KaTeX (src/components/MathText.tsx). */
+.math-block .katex-display {
+  margin: 0.35em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.1em 0;
+}

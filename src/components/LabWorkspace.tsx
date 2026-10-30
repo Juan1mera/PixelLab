@@ -12,6 +12,7 @@ import {
 import HistogramChart from '@/components/HistogramChart';
 import ImagePanel from '@/components/ImagePanel';
 import LabNav from '@/components/LabNav';
+import { MathInline, MathText } from '@/components/MathText';
 import MenuBar from '@/components/MenuBar';
 import OperationTabs from '@/components/OperationTabs';
 import ParamControls from '@/components/ParamControls';
@@ -265,7 +266,7 @@ function Workspace({ lab }: { lab: LabDefinition }) {
               {t(lab.title)}
             </h1>
             <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-400">
-              {t(lab.summary)}
+              <MathInline text={t(lab.summary)} />
             </p>
             <span
               className={
@@ -284,9 +285,10 @@ function Workspace({ lab }: { lab: LabDefinition }) {
             <summary className="cursor-pointer font-medium text-zinc-700 dark:text-zinc-300">
               {t({ ru: 'Теория', es: 'Teoría' })}
             </summary>
-            <p className="mt-2 leading-relaxed text-zinc-600 dark:text-zinc-400">
-              {t(lab.theory)}
-            </p>
+            <MathText
+              text={t(lab.theory)}
+              className="mt-2 leading-relaxed text-zinc-600 dark:text-zinc-400"
+            />
           </details>
 
           <StatusPanel

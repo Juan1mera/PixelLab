@@ -65,10 +65,9 @@ const MASK_NAMES: Record<LaplacianMask, { ru: string; es: string }> = {
   '2b': { ru: 'Рис. 2, б', es: 'Fig. 2b' },
 };
 
-/** Entero con el signo menos tipográfico (−), como en el enunciado. */
+/** Entero para una fórmula TeX: KaTeX ya pinta el `-` como signo menos. */
 function fmt(value: number): string {
-  const n = Math.round(value);
-  return n < 0 ? `−${-n}` : String(n);
+  return String(Math.round(value));
 }
 
 function readMask(params: ParamValues): LaplacianMask {
@@ -106,16 +105,17 @@ export function laplacian(src: GrayImage, params: ParamValues): OperationResult 
   }
 
   const name = MASK_NAMES[mask];
-  const range = `∇²f ∈ [${fmt(lMin)}, ${fmt(lMax)}]`;
-  const center = `w(0,0) = ${fmt(w00)}`;
+  // Fórmulas en TeX: `$…$` se pinta con KaTeX en el panel «Состояние».
+  const range = `$\\nabla^2 f \\in [${fmt(lMin)},\\ ${fmt(lMax)}]$`;
+  const center = `$w(0,0) = ${fmt(w00)}$`;
 
   // Imagen de brillo constante: ∇²f = 0 en todas partes.
   if (lMin === 0 && lMax === 0) {
     return {
       image: output === 'laplacian' ? createGray(src.width, src.height) : clone(src),
       message: {
-        ru: `${name.ru}: ∇²f = 0 во всех точках (изображение однородное).`,
-        es: `${name.es}: ∇²f = 0 en todos los píxeles (imagen uniforme).`,
+        ru: `${name.ru}: $\\nabla^2 f = 0$ во всех точках (изображение однородное).`,
+        es: `${name.es}: $\\nabla^2 f = 0$ en todos los píxeles (imagen uniforme).`,
       },
     };
   }
@@ -137,8 +137,8 @@ export function laplacian(src: GrayImage, params: ParamValues): OperationResult 
     return {
       image: out,
       message: {
-        ru: `${name.ru} · ${center} · лапласиан${normalize ? ' (нормирован)' : ''} · ${range}`,
-        es: `${name.es} · ${center} · laplaciano${normalize ? ' (normalizado)' : ''} · ${range}`,
+        ru: `${name.ru}, ${center}\nЛапласиан${normalize ? ' (нормирован)' : ''}\n${range}`,
+        es: `${name.es}, ${center}\nLaplaciano${normalize ? ' (normalizado)' : ''}\n${range}`,
       },
     };
   }
@@ -150,13 +150,14 @@ export function laplacian(src: GrayImage, params: ParamValues): OperationResult 
     out.data[i] = clamp8(src.data[i] + factor * lap[i]);
   }
 
-  const formula = sign < 0 ? 'g = f − k·∇²f' : 'g = f + k·∇²f';
-  const text = `${center} · ${formula} · k = ${k.toFixed(2)} · ${range}`;
+  // Un dato por renglón.
+  const formula = sign < 0 ? 'g = f - k \\cdot \\nabla^2 f' : 'g = f + k \\cdot \\nabla^2 f';
+  const text = `$${formula}, \\quad k = ${k.toFixed(2)}$\n${range}`;
   return {
     image: out,
     message: {
-      ru: `${name.ru} · ${text}`,
-      es: `${name.es} · ${text}`,
+      ru: `${name.ru}, ${center}\n${text}`,
+      es: `${name.es}, ${center}\n${text}`,
     },
   };
 }

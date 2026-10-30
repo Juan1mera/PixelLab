@@ -10,12 +10,46 @@ export const lab03: LabDefinition = {
     es: 'Realce de nitidez con el gradiente',
   },
   summary: {
-    ru: 'g = f + k·|∇f|, где |∇f| ≈ |Gx| + |Gy| (простейший оператор, Робертс, Собел).',
-    es: 'g = f + k·|∇f|, con |∇f| ≈ |Gx| + |Gy| (operador simple, Roberts, Sobel).',
+    ru: '$g = f + k \\cdot |\\nabla f|$, где $|\\nabla f| \\approx |G_x| + |G_y|$ (простейший оператор, Робертс, Собел).',
+    es: '$g = f + k \\cdot |\\nabla f|$, con $|\\nabla f| \\approx |G_x| + |G_y|$ (operador simple, Roberts, Sobel).',
   },
   theory: {
-    ru: 'В обработке изображений первые производные реализуются через модуль градиента: для функции f(x, y) градиент — вектор (Gx, Gy), а его модуль |∇f| = √(Gx² + Gy²). Чтобы не вычислять корень в каждой точке, модуль приближают суммой модулей компонент: ∇f ≈ |Gx| + |Gy|. Это проще, сохраняет относительные изменения яркости, но теряет изотропность, поэтому используются маски, дающие результат для углов, кратных 90°. В окрестности 3×3 центральная точка f(x, y) обозначается z5, точка f(x − 1, y − 1) — z1 и т. д. Простейшее приближение: Gx = z8 − z5, Gy = z6 − z5. Перекрёстные градиенты Робертса: ∇f = |z9 − z5| + |z8 − z6| (маски 2×2). Оператор Собела (маски 3×3): ∇f = |(z7 + 2z8 + z9) − (z1 + 2z2 + z3)| + |(z3 + 2z6 + z9) − (z1 + 2z4 + z7)|; веса 2 у центральных точек дают большую гладкость. Сумма коэффициентов каждой маски равна 0, поэтому на участках постоянной яркости отклик равен 0, и выделяются только границы (режим «Выделение границ»). Для повышения резкости модуль градиента с весом k прибавляется к исходному снимку: g = f + k·|∇f|; контуры костей становятся светлее и чётче, контраст снимка возрастает.',
-    es: 'Las primeras derivadas se implementan con el módulo del gradiente: para f(x, y) el gradiente es el vector (Gx, Gy) y su módulo |∇f| = √(Gx² + Gy²). Para no calcular una raíz por píxel se aproxima con la suma de módulos: ∇f ≈ |Gx| + |Gy|. Es más barato y conserva los cambios relativos de brillo, pero pierde la isotropía, así que solo se usan máscaras que responden a ángulos múltiplos de 90°. En la vecindad 3×3 el píxel central f(x, y) es z5, f(x − 1, y − 1) es z1, etc. La aproximación más simple es Gx = z8 − z5, Gy = z6 − z5. Los gradientes cruzados de Roberts dan ∇f = |z9 − z5| + |z8 − z6| (máscaras 2×2). El operador de Sobel (3×3) da ∇f = |(z7 + 2z8 + z9) − (z1 + 2z2 + z3)| + |(z3 + 2z6 + z9) − (z1 + 2z4 + z7)|; el peso 2 de los puntos centrales suaviza el resultado. Los coeficientes de cada máscara suman 0, así que en zonas de brillo constante la respuesta es 0 y solo quedan los contornos (modo «Выделение границ»). Para realzar la nitidez se suma al original el módulo del gradiente con un peso k: g = f + k·|∇f|; los bordes de los huesos se aclaran y el contraste de la radiografía aumenta.',
+    ru: String.raw`
+      В обработке изображений первые производные реализуются через модуль градиента: для функции $f(x, y)$ градиент — вектор $(G_x, G_y)$, а его модуль
+      $$ |\nabla f| = \sqrt{G_x^2 + G_y^2}
+      Чтобы не вычислять корень в каждой точке, модуль приближают суммой модулей компонент:
+      $$ \nabla f \approx |G_x| + |G_y|
+      Это проще, сохраняет относительные изменения яркости, но теряет изотропность, поэтому используются маски, дающие результат для углов, кратных 90°. В окрестности 3×3 центральная точка $f(x, y)$ обозначается $z_5$, точка $f(x - 1, y - 1)$ — $z_1$ и т. д.
+      Простейшее приближение:
+      $$ G_x = z_8 - z_5
+      $$ G_y = z_6 - z_5
+      Перекрёстные градиенты Робертса (маски 2×2):
+      $$ \nabla f = |z_9 - z_5| + |z_8 - z_6|
+      Оператор Собела (маски 3×3):
+      $$ \begin{aligned} \nabla f = {} & |(z_7 + 2z_8 + z_9) - (z_1 + 2z_2 + z_3)| \\ & + |(z_3 + 2z_6 + z_9) - (z_1 + 2z_4 + z_7)| \end{aligned}
+      Веса 2 у центральных точек дают большую гладкость. Сумма коэффициентов каждой маски равна 0, поэтому на участках постоянной яркости отклик равен 0, и выделяются только границы (режим «Выделение границ»).
+      Для повышения резкости модуль градиента с весом $k$ прибавляется к исходному снимку:
+      $$ g = f + k \cdot |\nabla f|
+      Контуры костей становятся светлее и чётче, контраст снимка возрастает.
+    `,
+    es: String.raw`
+      Las primeras derivadas se implementan con el módulo del gradiente: para $f(x, y)$ el gradiente es el vector $(G_x, G_y)$ y su módulo
+      $$ |\nabla f| = \sqrt{G_x^2 + G_y^2}
+      Para no calcular una raíz por píxel se aproxima con la suma de módulos:
+      $$ \nabla f \approx |G_x| + |G_y|
+      Es más barato y conserva los cambios relativos de brillo, pero pierde la isotropía, así que solo se usan máscaras que responden a ángulos múltiplos de 90°. En la vecindad 3×3 el píxel central $f(x, y)$ es $z_5$, $f(x - 1, y - 1)$ es $z_1$, etc.
+      La aproximación más simple es:
+      $$ G_x = z_8 - z_5
+      $$ G_y = z_6 - z_5
+      Los gradientes cruzados de Roberts (máscaras 2×2) dan:
+      $$ \nabla f = |z_9 - z_5| + |z_8 - z_6|
+      El operador de Sobel (máscaras 3×3) da:
+      $$ \begin{aligned} \nabla f = {} & |(z_7 + 2z_8 + z_9) - (z_1 + 2z_2 + z_3)| \\ & + |(z_3 + 2z_6 + z_9) - (z_1 + 2z_4 + z_7)| \end{aligned}
+      El peso 2 de los puntos centrales suaviza el resultado. Los coeficientes de cada máscara suman 0, así que en zonas de brillo constante la respuesta es 0 y solo quedan los contornos (modo «Выделение границ»).
+      Para realzar la nitidez se suma al original el módulo del gradiente con un peso $k$:
+      $$ g = f + k \cdot |\nabla f|
+      Los bordes de los huesos se aclaran y el contraste de la radiografía aumenta.
+    `,
   },
   operations: [
     {
@@ -63,8 +97,8 @@ export const lab03: LabDefinition = {
           // Elegido a ojo con Sobel sobre la radiografía de la mano (variante 1).
           default: 0.25,
           hint: {
-            ru: 'Только для повышения резкости. Отклик Собела примерно в 4 раза больше, чем у Робертса, поэтому для Робертса и простейшего оператора берите k ≈ 1.',
-            es: 'Solo para el realce. La respuesta de Sobel es unas 4 veces la de Roberts: con Roberts o el operador simple usa k ≈ 1.',
+            ru: 'Только для повышения резкости. Отклик Собела примерно в 4 раза больше, чем у Робертса, поэтому для Робертса и простейшего оператора берите $k \\approx 1$.',
+            es: 'Solo para el realce. La respuesta de Sobel es unas 4 veces la de Roberts: con Roberts o el operador simple usa $k \\approx 1$.',
           },
         },
         {
@@ -73,8 +107,8 @@ export const lab03: LabDefinition = {
           type: 'checkbox',
           default: true,
           hint: {
-            ru: 'Только для выделения границ: растянуть максимум |∇f| до 255.',
-            es: 'Solo para contornos: escalar el máximo de |∇f| hasta 255.',
+            ru: 'Только для выделения границ: растянуть максимум $|\\nabla f|$ до 255.',
+            es: 'Solo para contornos: escalar el máximo de $|\\nabla f|$ hasta 255.',
           },
         },
       ],

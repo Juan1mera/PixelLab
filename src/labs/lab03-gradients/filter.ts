@@ -116,8 +116,8 @@ export function gradient(src: GrayImage, params: ParamValues): OperationResult {
     return {
       image: output === 'edges' ? createGray(src.width, src.height) : clone(src),
       message: {
-        ru: `${name.ru}: ∇f = 0 во всех точках (изображение однородное).`,
-        es: `${name.es}: ∇f = 0 en todos los píxeles (imagen uniforme).`,
+        ru: `${name.ru}: $\\nabla f = 0$ во всех точках (изображение однородное).`,
+        es: `${name.es}: $\\nabla f = 0$ en todos los píxeles (imagen uniforme).`,
       },
     };
   }
@@ -129,12 +129,12 @@ export function gradient(src: GrayImage, params: ParamValues): OperationResult {
     for (let i = 0; i < grad.length; i++) {
       out.data[i] = clamp8(grad[i] * scale);
     }
-    const text = `max |∇f| = ${Math.round(gMax)}`;
+    const text = `$\\max |\\nabla f| = ${Math.round(gMax)}$`;
     return {
       image: out,
       message: {
-        ru: `${name.ru} · границы · ${text}`,
-        es: `${name.es} · contornos · ${text}`,
+        ru: `${name.ru}, границы\n${text}`,
+        es: `${name.es}, contornos\n${text}`,
       },
     };
   }
@@ -144,12 +144,16 @@ export function gradient(src: GrayImage, params: ParamValues): OperationResult {
     out.data[i] = clamp8(src.data[i] + k * grad[i]);
   }
 
-  const text = `k = ${k.toFixed(2)} · max |∇f| = ${Math.round(gMax)}`;
+  // Un dato por renglón; `$…$` se pinta con KaTeX en el panel «Состояние».
+  const text = [
+    `$g = f + k \\cdot |\\nabla f|, \\quad k = ${k.toFixed(2)}$`,
+    `$\\max |\\nabla f| = ${Math.round(gMax)}$`,
+  ].join('\n');
   return {
     image: out,
     message: {
-      ru: `${name.ru} · g = f + k·|∇f| · ${text}`,
-      es: `${name.es} · g = f + k·|∇f| · ${text}`,
+      ru: `${name.ru}\n${text}`,
+      es: `${name.es}\n${text}`,
     },
   };
 }

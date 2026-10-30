@@ -10,12 +10,36 @@ export const lab04: LabDefinition = {
     es: 'Realce de nitidez con el laplaciano',
   },
   summary: {
-    ru: 'g = f ∓ ∇²f, знак по центральному коэффициенту w(0,0) маски (рис. 1 и 2: 4 и 8 соседей).',
-    es: 'g = f ∓ ∇²f, con el signo según el coeficiente central w(0,0) (máscaras de 4 y 8 vecinos).',
+    ru: '$g = f \\mp \\nabla^2 f$, знак по центральному коэффициенту $w(0,0)$ маски (рис. 1 и 2: 4 и 8 соседей).',
+    es: '$g = f \\mp \\nabla^2 f$, con el signo según el coeficiente central $w(0,0)$ (máscaras de 4 y 8 vecinos).',
   },
   theory: {
-    ru: 'Простейшим изотропным оператором, основанным на производных, является лапласиан: ∇²f = ∂²f/∂x² + ∂²f/∂y². Он линеен, а его отклик не зависит от направления неоднородностей. В дискретном виде ∂²f/∂x² = f(x + 1, y) + f(x − 1, y) − 2f(x, y), ∂²f/∂y² = f(x, y + 1) + f(x, y − 1) − 2f(x, y), откуда ∇²f = f(x + 1, y) + f(x − 1, y) + f(x, y + 1) + f(x, y − 1) − 4f(x, y). Этой формуле соответствует маска рис. 1, а (центр −4), изотропная для поворотов на углы, кратные 90°. Добавив два диагональных члена, получаем маску рис. 1, б (центр −8), изотропную для углов, кратных 45°. Маски рис. 2 (центр +4 и +8) — «негативный» лапласиан: результат тот же, но с другим знаком. Лапласиан подчёркивает разрывы яркости и подавляет области с плавными изменениями, поэтому сам по себе даёт сероватые линии контуров на тёмном фоне (рис. 3, режим «Только лапласиан»). Чтобы восстановить фон и сохранить эффект повышения резкости, лапласиан складывают с исходным изображением. Обобщённый алгоритм: g(x, y) = f(x, y) − ∇²f(x, y), если w(0,0) < 0, и g(x, y) = f(x, y) + ∇²f(x, y), если w(0,0) ≥ 0, где w(0,0) — центральный коэффициент маски. Маска с 8 соседями даёт более сильное повышение резкости, чем маска с 4 соседями.',
-    es: 'El operador isótropo más simple basado en derivadas es el laplaciano: ∇²f = ∂²f/∂x² + ∂²f/∂y². Es lineal y su respuesta no depende de la dirección de las discontinuidades. En forma discreta ∂²f/∂x² = f(x + 1, y) + f(x − 1, y) − 2f(x, y), ∂²f/∂y² = f(x, y + 1) + f(x, y − 1) − 2f(x, y), de donde ∇²f = f(x + 1, y) + f(x − 1, y) + f(x, y + 1) + f(x, y − 1) − 4f(x, y). A esta fórmula le corresponde la máscara de la fig. 1a (centro −4), isótropa para giros múltiplos de 90°. Añadiendo los dos términos diagonales se obtiene la fig. 1b (centro −8), isótropa para múltiplos de 45°. Las máscaras de la fig. 2 (centro +4 y +8) son el laplaciano «negativo»: mismo resultado con el signo cambiado. El laplaciano resalta los saltos de brillo y suprime las zonas de variación suave, así que por sí solo da líneas grisáceas en los contornos sobre un fondo oscuro (fig. 3, modo «Solo el laplaciano»). Para recuperar el fondo conservando el realce se suma el laplaciano a la imagen original. Algoritmo generalizado: g(x, y) = f(x, y) − ∇²f(x, y) si w(0,0) < 0, y g(x, y) = f(x, y) + ∇²f(x, y) si w(0,0) ≥ 0, donde w(0,0) es el coeficiente central de la máscara. La máscara de 8 vecinos realza más que la de 4.',
+    ru: String.raw`
+      Простейшим изотропным оператором, основанным на производных, является лапласиан:
+      $$ \nabla^2 f = \frac{\partial^2 f}{\partial x^2} + \frac{\partial^2 f}{\partial y^2}
+      Он линеен, а его отклик не зависит от направления неоднородностей. В дискретном виде
+      $$ \frac{\partial^2 f}{\partial x^2} = f(x + 1, y) + f(x - 1, y) - 2f(x, y)
+      $$ \frac{\partial^2 f}{\partial y^2} = f(x, y + 1) + f(x, y - 1) - 2f(x, y)
+      откуда
+      $$ \begin{aligned} \nabla^2 f = {} & f(x + 1, y) + f(x - 1, y) \\ & + f(x, y + 1) + f(x, y - 1) - 4f(x, y) \end{aligned}
+      Этой формуле соответствует маска рис. 1, а (центр −4), изотропная для поворотов на углы, кратные 90°. Добавив два диагональных члена, получаем маску рис. 1, б (центр −8), изотропную для углов, кратных 45°. Маски рис. 2 (центр +4 и +8) — «негативный» лапласиан: результат тот же, но с другим знаком.
+      Лапласиан подчёркивает разрывы яркости и подавляет области с плавными изменениями, поэтому сам по себе даёт сероватые линии контуров на тёмном фоне (рис. 3, режим «Только лапласиан»). Чтобы восстановить фон и сохранить эффект повышения резкости, лапласиан складывают с исходным изображением. Обобщённый алгоритм:
+      $$ g = \begin{cases} f - \nabla^2 f, & \text{если } w(0,0) < 0 \\ f + \nabla^2 f, & \text{если } w(0,0) \ge 0 \end{cases}
+      где $w(0,0)$ — центральный коэффициент маски. Маска с 8 соседями даёт более сильное повышение резкости, чем маска с 4 соседями.
+    `,
+    es: String.raw`
+      El operador isótropo más simple basado en derivadas es el laplaciano:
+      $$ \nabla^2 f = \frac{\partial^2 f}{\partial x^2} + \frac{\partial^2 f}{\partial y^2}
+      Es lineal y su respuesta no depende de la dirección de las discontinuidades. En forma discreta
+      $$ \frac{\partial^2 f}{\partial x^2} = f(x + 1, y) + f(x - 1, y) - 2f(x, y)
+      $$ \frac{\partial^2 f}{\partial y^2} = f(x, y + 1) + f(x, y - 1) - 2f(x, y)
+      de donde
+      $$ \begin{aligned} \nabla^2 f = {} & f(x + 1, y) + f(x - 1, y) \\ & + f(x, y + 1) + f(x, y - 1) - 4f(x, y) \end{aligned}
+      A esta fórmula le corresponde la máscara de la fig. 1a (centro −4), isótropa para giros múltiplos de 90°. Añadiendo los dos términos diagonales se obtiene la fig. 1b (centro −8), isótropa para múltiplos de 45°. Las máscaras de la fig. 2 (centro +4 y +8) son el laplaciano «negativo»: mismo resultado con el signo cambiado.
+      El laplaciano resalta los saltos de brillo y suprime las zonas de variación suave, así que por sí solo da líneas grisáceas en los contornos sobre un fondo oscuro (fig. 3, modo «Solo el laplaciano»). Para recuperar el fondo conservando el realce se suma el laplaciano a la imagen original. Algoritmo generalizado:
+      $$ g = \begin{cases} f - \nabla^2 f, & \text{si } w(0,0) < 0 \\ f + \nabla^2 f, & \text{si } w(0,0) \ge 0 \end{cases}
+      donde $w(0,0)$ es el coeficiente central de la máscara. La máscara de 8 vecinos realza más que la de 4.
+    `,
   },
   operations: [
     {
@@ -82,8 +106,8 @@ export const lab04: LabDefinition = {
           step: 0.05,
           default: 1,
           hint: {
-            ru: 'Только для повышения резкости: g = f ∓ k·∇²f. k = 1 — обобщённый алгоритм из методички.',
-            es: 'Solo para el realce: g = f ∓ k·∇²f. k = 1 es el algoritmo generalizado del enunciado.',
+            ru: 'Только для повышения резкости: $g = f \\mp k \\cdot \\nabla^2 f$. $k = 1$ — обобщённый алгоритм из методички.',
+            es: 'Solo para el realce: $g = f \\mp k \\cdot \\nabla^2 f$. $k = 1$ es el algoritmo generalizado del enunciado.',
           },
         },
         {
@@ -92,8 +116,8 @@ export const lab04: LabDefinition = {
           type: 'checkbox',
           default: false,
           hint: {
-            ru: 'Только для режима «Только лапласиан»: растянуть [min, max] ∇²f до [0, 255] вместо отсечения отрицательных значений.',
-            es: 'Solo para «Solo el laplaciano»: escalar [min, max] de ∇²f a [0, 255] en vez de recortar los negativos.',
+            ru: 'Только для режима «Только лапласиан»: растянуть $[\\min, \\max]$ значений $\\nabla^2 f$ до $[0,\\, 255]$ вместо отсечения отрицательных значений.',
+            es: 'Solo para «Solo el laplaciano»: escalar $[\\min, \\max]$ de $\\nabla^2 f$ a $[0,\\, 255]$ en vez de recortar los negativos.',
           },
         },
       ],

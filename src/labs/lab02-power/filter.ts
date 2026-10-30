@@ -41,8 +41,8 @@ export function power(src: GrayImage, params: ParamValues): OperationResult {
     return {
       image: clone(src),
       message: {
-        ru: 'Изображение чёрное (L − 1 = 0): преобразование не требуется.',
-        es: 'Imagen negra (L − 1 = 0): no hay nada que transformar.',
+        ru: 'Изображение чёрное ($L - 1 = 0$): преобразование не требуется.',
+        es: 'Imagen negra ($L - 1 = 0$): no hay nada que transformar.',
       },
     };
   }
@@ -59,11 +59,21 @@ export function power(src: GrayImage, params: ParamValues): OperationResult {
     out.data[i] = table[src.data[i]];
   }
 
-  const text = `γ = ${gamma.toFixed(2)} · c = ${formatC(c)} · L − 1 = ${top}`;
+  // Un dato por renglón; `$…$` se pinta con KaTeX en el panel «Состояние».
+  const text = [
+    `$\\gamma = ${gamma.toFixed(2)}$`,
+    `$c = ${formatC(c)}$`,
+    `$L - 1 = ${top}$`,
+  ].join('\n');
   return { image: out, message: { ru: text, es: text } };
 }
 
-/** c puede ir de ~1e-10 a ~250: notación exponencial solo cuando hace falta. */
+/**
+ * c puede ir de ~1e-10 a ~250: notación exponencial solo cuando hace falta,
+ * escrita en TeX como `1.234 \cdot 10^{-5}`.
+ */
 function formatC(c: number): string {
-  return c >= 0.01 && c < 1000 ? c.toFixed(4) : c.toExponential(3);
+  if (c >= 0.01 && c < 1000) return c.toFixed(4);
+  const [mantissa, exponent] = c.toExponential(3).split('e');
+  return `${mantissa} \\cdot 10^{${Number(exponent)}}`;
 }
